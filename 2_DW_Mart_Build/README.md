@@ -79,18 +79,6 @@ A mart for tracking priority roles, kept up to date with incremental `MERGE` ope
 - **Grain:** One row per job posting, with an assigned priority level
 - **Key Features:** **`MERGE` handles inserts, updates, and deletes in a single statement**, the same upsert pattern used in production pipelines to process only changed data
 
-### Company Mart (Optional)
-
-A mart for analyzing company hiring trends by role, location, and month.
-
-![Company Mart Schema](../Images/1_2_Company_Mart.png)
-
-- **SQL File:** [`07_create_company_mart.sql`](./07_create_company_mart.sql) – Builds the company hiring trends mart (optional)
-- **Purpose:** Analyze how companies hire across roles, locations, and time
-- **Grain:** `company_id + job_title_short_id + location_id + month_start_date`
-- **Key Features:** Bridge tables for many-to-many relationships (company–location and job title hierarchies)
-- **Note:** This mart is optional and can be skipped without affecting the rest of the pipeline
-
 ## Data Engineering Skills Demonstrated
 
 ### ETL Pipeline Development
@@ -104,10 +92,9 @@ A mart for analyzing company hiring trends by role, location, and month.
 ### Dimensional Modeling
 
 - **Star Schema Design:** A fact table (`job_postings_fact`) surrounded by dimension tables (`company_dim`, `skills_dim`)
-- **Bridge Tables:** Handling many-to-many relationships (`skills_job_dim`, `bridge_company_location`, `bridge_job_title`)
-- **Grain Definition:** Clearly defined granularity for every fact table (e.g. skill + month, company + title + location + month)
+- **Bridge Tables:** Handling the many-to-many relationship between job postings and skills (`skills_job_dim`)
+- **Grain Definition:** Clearly defined granularity for every table (e.g. one row per job posting, skill + month + job title)
 - **Additive Measures:** Counts and sums that can be safely re-aggregated at any level
-- **Surrogate Keys:** Sequential ID generation using CTEs with self-joins (company mart only)
 
 ### SQL Advanced Techniques
 
@@ -124,5 +111,5 @@ A mart for analyzing company hiring trends by role, location, and month.
 - **Idempotency:** Every script can be rerun safely without duplicating or corrupting data
 - **Data Validation:** Verification queries after each pipeline step to confirm data integrity
 - **Type Safety:** Explicit data types (`VARCHAR`, `INTEGER`, `DOUBLE`, `BOOLEAN`, `TIMESTAMP`) for every column
-- **Schema Organization:** Separate schemas (`flat_mart`, `skills_mart`, `priority_mart`, `company_mart`) to keep each mart logically isolated
+- **Schema Organization:** Separate schemas (`flat_mart`, `skills_mart`, `priority_mart`) to keep each mart logically isolated
 - **Error Handling:** Structured script execution with clear error messages and progress reporting
